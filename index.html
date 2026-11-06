@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application Portfolio | CLH AppHub</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#mainContent">Skip to main content</a>
+
+  <!-- ============ SIDEBAR ============ -->
+
+  <aside class="sidebar" aria-label="Primary navigation">
+    <div class="logo">CLH<span>AppHub</span></div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-view="applications" onclick="switchView('applications')">
+        <span class="nav-icon" aria-hidden="true">&#9638;</span>
+        Applications
+      </button>
+      <button class="nav-item" data-view="activity" onclick="switchView('activity')">
+        <span class="nav-icon" aria-hidden="true">&#9719;</span>
+        Activity
+      </button>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="avatar" aria-hidden="true">AD</div>
+      <div class="sidebar-user-meta">
+        <strong>A. Administrator</strong>
+        <small>Portfolio Admin &middot; Permitted user</small>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+
+  <main class="main" id="mainContent">
+
+    <!-- ===== Applications view ===== -->
+
+    <section id="applicationsView">
+      <header class="page-header">
+        <div>
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+            <span>Home</span> <span aria-hidden="true">/</span>
+            <span aria-current="page">Applications</span>
+          </nav>
+          <h1>Application Management</h1>
+          <p class="page-subtitle">
+            Register applications, publish new versions and review change
+            history. Access is restricted to permitted users.
+          </p>
+        </div>
+
+        <div class="page-actions">
+          <div class="search-box">
+            <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+              <circle cx="7" cy="7" r="4.5"></circle>
+              <path d="m10.5 10.5 3 3"></path>
+            </svg>
+            <input id="searchInput" type="search" placeholder="Search by name or owner..." aria-label="Search applications">
+          </div>
+          <button class="btn btn-primary" onclick="openCreateModal()">+ Create Application</button>
+        </div>
+      </header>
+
+      <div class="stats" role="list" aria-label="Portfolio summary">
+        <div class="stat-card" role="listitem">
+          <span class="stat-value" id="statTotal">0</span>
+          <span class="stat-label">Total applications</span>
+        </div>
+        <div class="stat-card" role="listitem">
+          <span class="stat-value" id="statActive">0</span>
+          <span class="stat-label">Active</span>
+        </div>
+        <div class="stat-card" role="listitem">
+          <span class="stat-value" id="statUpdated">0</span>
+          <span class="stat-label">Updated this month</span>
+        </div>
+      </div>
+
+      <section class="card" aria-labelledby="appsHeading">
+        <div class="card-header">
+          <div>
+            <h2 id="appsHeading">Applications</h2>
+            <p class="muted" id="appCount">0 applications</p>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Application Name</th>
+                <th scope="col">Owner</th>
+                <th scope="col">Version</th>
+                <th scope="col">Status</th>
+                <th scope="col">Last Updated</th>
+                <th scope="col"><span class="visually-hidden">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody id="appTable"></tbody>
+          </table>
+
+          <div id="emptyState" class="empty-state" hidden>
+            <div class="empty-icon" aria-hidden="true">&#9638;</div>
+            <h3>No applications found</h3>
+            <p id="emptyText">Get started by creating your first application.</p>
+            <button class="btn btn-primary" onclick="openCreateModal()">+ Create Application</button>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ===== Activity view ===== -->
+
+    <section id="activityView" hidden>
+      <header class="page-header">
+        <div>
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+            <span>Home</span> <span aria-hidden="true">/</span>
+            <span aria-current="page">Activity</span>
+          </nav>
+          <h1>Activity Log</h1>
+          <p class="page-subtitle">
+            Audit trail of every change made by permitted users across the
+            application portfolio.
+          </p>
+        </div>
+      </header>
+
+      <section class="card" aria-labelledby="activityHeading">
+        <div class="card-header">
+          <div>
+            <h2 id="activityHeading">Recent Activity</h2>
+            <p class="muted">Newest events first</p>
+          </div>
+        </div>
+        <div id="activityList" class="activity-list"></div>
+        <div id="activityEmpty" class="empty-state" hidden>
+          <div class="empty-icon" aria-hidden="true">&#9719;</div>
+          <h3>No activity yet</h3>
+          <p>Changes to applications will appear here.</p>
+        </div>
+      </section>
+    </section>
+
+  </main>
+
+  <!-- ============ CREATE MODAL ============ -->
+
+  <div class="modal-overlay" id="createModal" role="dialog" aria-modal="true" aria-labelledby="createModalTitle">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="createModalTitle">Create Application</h2>
+        <button class="icon-button" onclick="closeModal('createModal')" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <div class="field">
+        <label for="cName">Application Name <span class="required" aria-hidden="true">*</span></label>
+        <input id="cName" type="text" autocomplete="off" placeholder="e.g. Customer Portal">
+        <p class="field-error" id="cNameError" role="alert"></p>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="cOwner">Owner Team <span class="required" aria-hidden="true">*</span></label>
+          <input id="cOwner" type="text" autocomplete="off" placeholder="e.g. Digital Experience Team">
+          <p class="field-error" id="cOwnerError" role="alert"></p>
+        </div>
+        <div class="field">
+          <label for="cVersion">Initial Version <span class="required" aria-hidden="true">*</span></label>
+          <input id="cVersion" type="text" autocomplete="off" placeholder="e.g. 1.0.0">
+          <p class="field-error" id="cVersionError" role="alert"></p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="cStatus">Status</label>
+        <select id="cStatus">
+          <option>Active</option>
+          <option>Under Maintenance</option>
+          <option>Deprecated</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="cDesc">Description</label>
+        <textarea id="cDesc" placeholder="Short summary of what the application does (optional)"></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('createModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="createApp()">Create Application</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ EDIT DETAILS MODAL ============ -->
+
+  <div class="modal-overlay" id="editModal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="editModalTitle">Edit Application Details</h2>
+        <button class="icon-button" onclick="closeModal('editModal')" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <p class="modal-context" id="editAppInfo"></p>
+
+      <div class="field">
+        <label for="eName">Application Name <span class="required" aria-hidden="true">*</span></label>
+        <input id="eName" type="text" autocomplete="off">
+        <p class="field-error" id="eNameError" role="alert"></p>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="eOwner">Owner Team <span class="required" aria-hidden="true">*</span></label>
+          <input id="eOwner" type="text" autocomplete="off">
+          <p class="field-error" id="eOwnerError" role="alert"></p>
+        </div>
+        <div class="field">
+          <label for="eStatus">Status</label>
+          <select id="eStatus">
+            <option>Active</option>
+            <option>Under Maintenance</option>
+            <option>Deprecated</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="eDesc">Description</label>
+        <textarea id="eDesc" placeholder="Short summary of what the application does (optional)"></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('editModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ NEW VERSION MODAL ============ -->
+
+  <div class="modal-overlay" id="versionModal" role="dialog" aria-modal="true" aria-labelledby="versionModalTitle">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="versionModalTitle">Publish New Version</h2>
+        <button class="icon-button" onclick="closeModal('versionModal')" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <p class="modal-context" id="selectedAppInfo"></p>
+
+      <div class="field">
+        <label for="vNew">New Version <span class="required" aria-hidden="true">*</span></label>
+        <input id="vNew" type="text" autocomplete="off" placeholder="e.g. 2.0.0">
+        <p class="field-hint">Use semantic versioning, e.g. 1.4.2 or 2.0.0-rc1.</p>
+        <p class="field-error" id="vNewError" role="alert"></p>
+      </div>
+
+      <div class="field">
+        <label for="vNotes">Release Notes <span class="required" aria-hidden="true">*</span></label>
+        <textarea id="vNotes" placeholder="Describe what changed in this release..."></textarea>
+        <p class="field-error" id="vNotesError" role="alert"></p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('versionModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="updateVersion()">Publish Version</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ HISTORY MODAL ============ -->
+
+  <div class="modal-overlay" id="historyModal" role="dialog" aria-modal="true" aria-labelledby="historyTitle">
+    <div class="modal modal-wide">
+      <div class="modal-header">
+        <h2 id="historyTitle">Version History</h2>
+        <button class="icon-button" onclick="closeModal('historyModal')" aria-label="Close dialog">&times;</button>
+      </div>
+      <div id="historyContent" class="timeline"></div>
+    </div>
+  </div>
+
+  <!-- ============ DELETE CONFIRM MODAL ============ -->
+
+  <div class="modal-overlay" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h2 id="deleteModalTitle">Delete Application</h2>
+        <button class="icon-button" onclick="closeModal('deleteModal')" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <p>
+        This will permanently remove
+        <strong id="deleteAppName"></strong>
+        and its entire version history. No copy is kept anywhere in this
+        application and this action cannot be undone.
+      </p>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+        <button class="btn btn-danger" onclick="deleteApp()">Delete Permanently</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TOAST ============ -->
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
